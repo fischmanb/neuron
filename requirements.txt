@@ -1,0 +1,15 @@
+numba
+aiofiles
+pandas
+tqdm
+antropy
+asyncpg
+pydub
+webrtcvad
+google-cloud-storage
+cython
+torchaudio
+wandb
+matplotlib
+silero-vad
+ffmpeg-python
