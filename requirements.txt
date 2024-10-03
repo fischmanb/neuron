@@ -13,3 +13,4 @@ wandb
 matplotlib
 silero-vad
 ffmpeg-python
+uuid6
