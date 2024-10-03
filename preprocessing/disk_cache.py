@@ -97,9 +97,12 @@ def main():
     with open(cache_file, 'rb') as f:
         segments_list = pickle.load(f)
 
+    segments_list = list(segments_list)
     print(f"Loaded segments list {len(list(segments_list))} files")
+    print("test")
+    print(segments_list[0])
+    print(segments_list[-1])
     for blob_fullpath in segments_list:
-        print('hi')
         if blob_fullpath.split('/')[-1] == 'mfcc.pt':
             alt_filename = f"{blob_fullpath.split('/')[1]}.pt"
             if os.path.exists(f"{savepath}/{alt_filename}"):
