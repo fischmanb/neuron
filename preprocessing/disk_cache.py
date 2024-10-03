@@ -102,7 +102,7 @@ def main():
         if blob_fullpath.split('/')[-1] == 'mfcc.pt':
             alt_filename = f"{blob_fullpath.split('/')[1]}.pt"
             if os.path.exists(f"{savepath}/{alt_filename}"):
-                # print(f"Skipping {alt_filename}")
+                print(f"Skipping {alt_filename}")
                 pass
             else:
                 gstor.download_blob_to_disk_chris(mfcc_bucket, blob_fullpath,
