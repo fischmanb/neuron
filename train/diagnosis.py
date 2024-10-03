@@ -217,7 +217,7 @@ def main():
         "local_debug": False,
         "tracking_project": "features",
         "num_epochs": 10,
-        "batch_size": 32,
+        "batch_size": 1,
         "fine_tune_epochs": 0,
         "fine_tune_lr_factor": 0.5,
         "learning_rate": 1e-05,  #  1e-5 to 5e-5,
