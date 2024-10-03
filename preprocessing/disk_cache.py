@@ -103,14 +103,14 @@ def main():
     for item in segments_list[:10]:
         print(item)
 
-    for blob_fullpath in segments_list:
-        if blob_fullpath.split('/')[-1] == 'mfcc.pt':
-            alt_filename = f"{blob_fullpath.split('/')[1]}.pt"
+    for filepath in segments_list:
+        if filepath.split('/')[-1] == 'mfcc.pt':
+            alt_filename = f"{filepath.split('/')[1]}.pt"
             if os.path.exists(f"{savepath}/{alt_filename}"):
                 pass
                 # print(f"Skipping {alt_filename}")
             else:
-                gstor.download_blob_to_disk_chris(mfcc_bucket, blob_fullpath, local_file_path=savepath, alt_filename=alt_filename, verbose=False)
+                gstor.download_blob_to_disk_chris(mfcc_bucket, filepath, local_file_path=savepath, alt_filename=alt_filename, verbose=False)
 
 
 if __name__ == '__main__':
