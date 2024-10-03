@@ -102,6 +102,9 @@ def main():
     print("test")
     print(segments_list[0])
     print(segments_list[-1])
+    for item in segments_list:
+        print(item)
+
     for blob_fullpath in segments_list:
         if blob_fullpath.split('/')[-1] == 'mfcc.pt':
             alt_filename = f"{blob_fullpath.split('/')[1]}.pt"
