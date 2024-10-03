@@ -100,10 +100,11 @@ def main():
     segments_list = list(segments_list)
     print(f"Loaded segments list {len(list(segments_list))} files")
 
-    for item in segments_list[:10]:
+    for item in segments_list:
         alt_filename = f"{item.split('/')[1]}.pt"
         if os.path.exists(f"{savepath}/{alt_filename}"):
-            print("skipping")
+            pass
+            # print("skipping")
         else:
             gstor.download_blob_to_disk_chris(mfcc_bucket, item, local_file_path=savepath, alt_filename=alt_filename, verbose=False)
 
