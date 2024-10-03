@@ -103,8 +103,7 @@ def main():
     for item in segments_list:
         alt_filename = f"{item.split('/')[1]}.pt"
         if os.path.exists(f"{savepath}/{alt_filename}"):
-            pass
-            # print("skipping")
+            print("skipping")
         else:
             gstor.download_blob_to_disk_chris(mfcc_bucket, item, local_file_path=savepath, alt_filename=alt_filename, verbose=False)
 
