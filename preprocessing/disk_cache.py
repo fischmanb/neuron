@@ -99,11 +99,6 @@ def main():
 
     segments_list = list(segments_list)
     print(f"Loaded segments list {len(list(segments_list))} files")
-    print("test")
-    print(segments_list[0])
-    print(segments_list[-1])
-    for item in segments_list:
-        print(item)
 
     for blob_fullpath in segments_list:
         if blob_fullpath.split('/')[-1] == 'mfcc.pt':
