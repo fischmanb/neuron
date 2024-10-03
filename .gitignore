@@ -9,10 +9,8 @@ audio_segments/
 audio_segments/**
 wandb/
 train/wandb/
-configs/
-train/networks/
-fusion.py
-diagnosis.py
+localonly.ini
+
 
 ### Python template
 # Byte-compiled / optimized / DLL files
