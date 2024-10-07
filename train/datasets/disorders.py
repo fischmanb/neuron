@@ -57,7 +57,7 @@ class DiagClip(Dataset):
         for diagnosis_idx in diagnoses:
             labels[diagnosis_idx] = 1
 
-        tpath = preprocessingroot / 'audio_segments' / 'mfcc' / f"{self.df.iloc[idx]['GUID']}.pt"
+        tpath = os.path.join("/data/mfcc", f"{self.df.iloc[idx]['GUID']}.pt")
         mfcc_tensor = torch.load(tpath, weights_only=True)
         mfcc_tensor = torch.nn.functional.pad(mfcc_tensor, (1, 999 - mfcc_tensor.shape[2]))
         return {
