@@ -5,15 +5,13 @@ import os
 import pickle
 from pathlib import Path
 from time import time
-
+import glob
 import pandas as pd
 import torch
-import torchaudio
 from torch.utils.data import Dataset, DataLoader
 
 from preprocessing import preprocessingroot
 from train import trainroot
-from preprocessing.feature.core import MelFrequency
 
 
 class DiagClip(Dataset):
@@ -30,7 +28,6 @@ class DiagClip(Dataset):
         self.phases = ["train", "val"]
         self.split = split
         self.guids = []
-        self.melfreq = MelFrequency(sample_rate=16000)
 
         if not os.path.exists(trainroot / 'datasets' / 'trainval.pkl'):
             self.cache_trainval()
@@ -39,20 +36,7 @@ class DiagClip(Dataset):
             self.guids = pickle.load(f)[split]
 
         # self.idx_to_label = {0: 'Trauma- and Stressor-Related Disorders', 1: 'Bipolar Disorders', 2: 'Obsessive-Compulsive and Related Disorders', 3: 'Depressive Disorders', 4: 'Schizophrenia Spectrum and Other Psychotic Disorders', 5: 'Substance-Related and Addictive Disorders', 6: 'Anxiety Disorders', 7: 'Neurodevelopmental Disorders', 8: 'Neurocognitive Disorders'}
-        self.idx_to_label = {0: 'Substance-Related and Addictive Disorders', 1: 'Bipolar Disorders', 2: 'Anxiety Disorders', 3: 'Neurocognitive Disorders', 4: 'Schizophrenia Spectrum and Other Psychotic Disorders', 5: 'ADHD', 6: 'Depressive Disorders', 7: 'Obsessive-Compulsive and Related Disorders', 8: 'Trauma- and Stressor-Related Disorders'}
-
-        """
-        ('Depressive Disorders')
-        ('Anxiety Disorders')
-        ('Trauma- and Stressor-Related Disorders')
-        ('Obsessive-Compulsive and Related Disorders')
-        ('Bipolar Disorders')
-        ('Substance-Related and Addictive Disorders')
-        ('ADHD')
-        ('Neurocognitive Disorders')
-        ('Schizophrenia Spectrum and Other Psychotic Disorders')
-        """
-
+        self.idx_to_label = {0: 'Anxiety Disorders', 1: 'Trauma- and Stressor-Related Disorders', 2: 'Substance-Related and Addictive Disorders', 3: 'Neurocognitive Disorders', 4: 'ADHD', 5: 'Depressive Disorders', 6: 'Bipolar Disorders', 7: 'Schizophrenia Spectrum and Other Psychotic Disorders', 8: 'Obsessive-Compulsive and Related Disorders'}
         self.label_to_idx = {v: k for k, v in self.idx_to_label.items()}
         self.classlabels = list(self.idx_to_label.values())
         self.num_classes = num_classes
@@ -89,9 +73,10 @@ class DiagClip(Dataset):
         df['GUID'] = df['GUID'].astype(str)
         task_folder = preprocessingroot / 'audio_segments' / task_name
         assert os.path.exists(task_folder)
-        cachefiles = os.listdir(task_folder)
+        files_folders = glob.glob(os.path.join(task_folder, '**', '*'), recursive=True)
+        cachefiles = [f for f in files_folders if os.path.isfile(f) and not f.startswith(".")]
         cachefiles = [Path(x).stem for x in cachefiles]
-        assert len(cachefiles) > 0, f"There aren't any local cache files for the task {task_name}"
+        assert len(cachefiles) > 0, f"There aren't any local audio segment files for the task {task_name}"
         df = df[df['GUID'].isin(cachefiles)]
         df = df.sort_values(by="patient_id").reset_index(drop=True)
         tlen = int(0.8 * len(df))

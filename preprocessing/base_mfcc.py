@@ -8,6 +8,7 @@ import ffmpeg
 import torchaudio
 from google.cloud import storage
 from silero_vad import load_silero_vad, get_speech_timestamps
+from feature.core import MelFrequency
 
 
 class GcpStorage:
@@ -46,34 +47,6 @@ class GcpStorage:
         with open(local_file_path, 'wb') as file:
             file.write(blob_data)
         print(f"Downloaded {blob_name} to {local_file_path}")
-
-    # def extract_features(self, audio_segment, sr, patient_id):
-    #     features = {'patient_id': patient_id}
-    #
-    #     minimum_samples = sr * 0.1  # Minimum 100 ms
-    #     if len(audio_segment) < minimum_samples:
-    #         return None
-    #
-    #     # MFCCs
-    #     n_mels = min(128, sr // 2)  # Adjust n_mels based on sr
-    #     mfccs = librosa.feature.mfcc(y=audio_segment, sr=sr, n_mfcc=13, n_mels=n_mels)
-    #     features['mfccs'] = mfccs
-    #
-    #
-    #     if mfccs.shape[1] >= 9:
-    #         delta_mfccs = librosa.feature.delta(mfccs)
-    #     else:
-    #         delta_mfccs = np.zeros_like(mfccs)
-    #     features['delta_mfccs'] = delta_mfccs
-    #
-    #     # Delta-Delta MFCCs
-    #     if mfccs.shape[1] >= 9:
-    #         delta_delta_mfccs = librosa.feature.delta(mfccs, order=2)
-    #     else:
-    #         delta_delta_mfccs = np.zeros_like(mfccs)
-    #     features['delta_delta_mfccs'] = delta_delta_mfccs
-    #
-    #     return features
 
     def extract_label_id(self, filename):
         """audio files and JSON annotations are matched by an ID that are separated with a hyphen by convention"""
@@ -183,7 +156,7 @@ class GcpStorage:
             raise Exception(f"Error verifying m4a file: {e.stderr.decode('utf-8')}")
 
 
-def process_bucket(verify_m4a=True, verbose=False):
+def process_bucket(verify_m4a=True, verbose=False, annotate=False):
     """
     Iterate through the audio files, get segments, convert to wav
     """
@@ -191,13 +164,16 @@ def process_bucket(verify_m4a=True, verbose=False):
     vad_model = load_silero_vad()
 
     audio_bucket = "private-management-files"
-    json_bucket = "processed-json-files-v2"
+    if annotate:
+        json_bucket = "processed-json-files-v2"
 
     audio_filenames = gstor.list_files(audio_bucket, suffix="**.m4a")
-    json_filenames = gstor.list_files(json_bucket, suffix="**.json")
+    if annotate:
+        json_filenames = gstor.list_files(json_bucket, suffix="**.json")
     for audio_filename in audio_filenames:
         label_id = gstor.extract_label_id(audio_filename)
-        annotation_matches = [x for x in json_filenames if f"-{label_id}." in x]
+        if annotate:
+            annotation_matches = [x for x in json_filenames if f"-{label_id}." in x]
         if len(annotation_matches) == 0:
             pass  # TODO log the event of missing annotation JSON for this audio file
         elif len(annotation_matches) > 1:
@@ -244,16 +220,15 @@ def test_mfcc_bucket(verify_m4a=True, verbose=False):
 
 
 def sample_mfcc():
-    pass
-    # filepath = projectroot / 'data' / 'M_0025_11y10m_1.wav'
-    # waveform, sample_rate = torchaudio.load(filepath, normalize=True)
-    # melfreq = MelFrequency(sample_rate=sample_rate)
-    # mfcc_tensor = mfcc.transform(waveform)
-    # print(mfcc_tensor.shape)
+    filepath = "a sample wav file full path"
+    waveform, sample_rate = torchaudio.load(filepath, normalize=True)
+    melfreq = MelFrequency(sample_rate=sample_rate)
+    mfcc_tensor = melfreq.transform(waveform)
+    print(mfcc_tensor.shape)
 
 
 if __name__ == '__main__':
     # sample_mfcc()
-    # process_bucket()
-    test_mfcc_bucket()
+    process_bucket()
+    # test_mfcc_bucket()
 

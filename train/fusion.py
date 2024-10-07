@@ -151,3 +151,65 @@ This approach treats each feature as part of a hierarchical structure, where the
 features through multi-head architectures (similar to transformers). Each head focuses on a different feature, and the
 outputs are combined later.
 """
+
+
+"""
+6. SIX Whatever this is, combination of the above?
+"""
+import torch
+import torch.nn as nn
+
+
+class MultiHeadFusionTransformer(nn.Module):
+    def __init__(self, d_model=2048, nhead=8, num_encoder_layers=6, dim_feedforward=2048):
+        super(MultiHeadFusionTransformer, self).__init__()
+
+        # Transformer Encoders for MFCC and STFT features
+        self.mfcc_encoder = nn.TransformerEncoder(
+            nn.TransformerEncoderLayer(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward),
+            num_layers=num_encoder_layers
+        )
+
+        self.stft_encoder = nn.TransformerEncoder(
+            nn.TransformerEncoderLayer(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward),
+            num_layers=num_encoder_layers
+        )
+
+        # Fusion layer: Another transformer encoder to fuse MFCC and STFT outputs
+        self.fusion_transformer = nn.TransformerEncoder(
+            nn.TransformerEncoderLayer(d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward),
+            num_layers=num_encoder_layers
+        )
+
+        # Fully connected output layer
+        self.fc_out = nn.Linear(d_model, d_model)  # Can adjust based on the task
+
+    def forward(self, mfcc, stft):
+        # Pass MFCC and STFT through their respective transformer encoders
+        mfcc_encoded = self.mfcc_encoder(mfcc)  # Shape: (seq_len_mfcc, batch_size, d_model)
+        stft_encoded = self.stft_encoder(stft)  # Shape: (seq_len_stft, batch_size, d_model)
+
+        # Concatenate the outputs of both encoders along the time dimension
+        # Shape will now be: (seq_len_mfcc + seq_len_stft, batch_size, d_model)
+        combined_features = torch.cat((mfcc_encoded, stft_encoded), dim=0)
+
+        # Pass the combined features through the fusion transformer encoder
+        fused_output = self.fusion_transformer(combined_features)
+
+        # Apply fully connected output layer (optional, depends on task)
+        out = self.fc_out(fused_output)
+
+        return out
+
+
+# Example usage
+model = MultiHeadFusionTransformer()
+
+# Random MFCC and STFT tensors
+# MFCC input: (sequence_length, batch_size, feature_dim)
+mfcc = torch.rand((10, 32, 2048))  # Sequence length 10 for MFCC
+stft = torch.rand((20, 32, 2048))  # Sequence length 20 for STFT
+
+# Forward pass
+output = model(mfcc, stft)
+print(output.squeeze().shape)

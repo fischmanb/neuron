@@ -40,5 +40,5 @@ class ModernM5(nn.Module):
         x = self.dropout(x)
         x = self.fc1(x)
 
-        return self.sigmoid(x)
+        return x
 

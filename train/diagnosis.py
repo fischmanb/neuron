@@ -113,7 +113,7 @@ def train_loop(config, device):
                 running_corrects += batch_corrects
 
                 if step % 150 == 0 or step == 1:
-                    print(f"{len(dataloaders[phase]) - step} avg loss {running_loss / step} sample step loss {loss.item()} batch corrects {batch_corrects} avg acc {batch_corrects/config['batch_size']}")
+                    print(f"{len(dataloaders[phase]) - step} avg loss {running_loss / step} sample step loss {loss.item()} batch corrects {batch_corrects} avg acc {batch_corrects / (config['batch_size'] * config['num_classes'])}")
 
                 if phase == 'train':
                     loss.backward()
@@ -211,7 +211,7 @@ def main():
         "num_classes": 9,
         "disable_ax": True,
         "ax_total_trials": 0,
-        "multilabel_thresh": 0.5,
+        "multilabel_thresh": 0.6,
         "configfile": "localonly.ini",
         "num_workers": 10,
         "local_debug": False,
@@ -220,7 +220,7 @@ def main():
         "batch_size": 1,
         "fine_tune_epochs": 0,
         "fine_tune_lr_factor": 0.5,
-        "learning_rate": 1e-05,  #  1e-5 to 5e-5,
+        "learning_rate": 1e-04,  #  1e-5 to 5e-5,
         "step_lr": 23,
         "step_gamma": 0.8,
         "run_name": datetime.fromtimestamp(time()).strftime('%d_%B_%H%M%p'),  # never change this

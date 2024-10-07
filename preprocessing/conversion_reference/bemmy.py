@@ -107,7 +107,7 @@ def new_function(m4amem):
 
 # Example usage with your existing code
 if __name__ == "__main__":
-    m4amem = load_file_from_disk("/Users/dm/repo/neurodiag/preprocessing/data/temp.m4a")
+    m4amem = load_file_from_disk("/Users/dm/repo/neurodiag/preprocessing/data/song.m4a")
 
     # Verify the m4a file from memory
     if verify_m4a_file_from_memory(m4amem):
