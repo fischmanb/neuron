@@ -57,7 +57,7 @@ class DiagClip(Dataset):
         for diagnosis_idx in diagnoses:
             labels[diagnosis_idx] = 1
 
-        tpath = os.path.join("/data/mfcc", f"{self.df.iloc[idx]['GUID']}.pt")
+        tpath = os.path.join("/data/traindata/mfcc", f"{self.df.iloc[idx]['GUID']}.pt")
         mfcc_tensor = torch.load(tpath, weights_only=True)
         mfcc_tensor = torch.nn.functional.pad(mfcc_tensor, (1, 999 - mfcc_tensor.shape[2]))
         return {
@@ -71,7 +71,7 @@ class DiagClip(Dataset):
         """Restrict individual patient sessions to all train or all val; do not spread patients across train/val"""
         df = pd.read_pickle(trainroot / 'datasets' / 'filtered_combined_labels_09-28.pkl.xz', compression='xz')
         df['GUID'] = df['GUID'].astype(str)
-        task_folder = preprocessingroot / 'audio_segments' / task_name
+        task_folder = os.path.join("/data/traindata", task_name)
         assert os.path.exists(task_folder)
         files_folders = glob.glob(os.path.join(task_folder, '**', '*'), recursive=True)
         cachefiles = [f for f in files_folders if os.path.isfile(f) and not f.startswith(".")]
