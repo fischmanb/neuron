@@ -12,7 +12,7 @@ from sklearn.metrics import multilabel_confusion_matrix, ConfusionMatrixDisplay,
 from torch.utils.data import DataLoader
 
 from train import trainroot
-from train.datasets.diagnosis import DiagClip
+from train.datasets.disorders import DiagClip
 from train.metrics.wandb import WandbLogger, init_wandb
 from train.networks.mfcc import ModernM5
 from train.util.storage import save_model
