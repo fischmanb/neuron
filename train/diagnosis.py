@@ -112,7 +112,7 @@ def train_loop(config, device):
                 batch_corrects = torch.sum(guesses == labels)
                 running_corrects += batch_corrects
 
-                if step % 150 == 0 or step == 1:
+                if step % 500 == 0 or step == 1:
                     print(f"{len(dataloaders[phase]) - step} avg loss {running_loss / step} sample step loss {loss.item()} batch corrects {batch_corrects} avg acc {batch_corrects / (config['batch_size'] * config['num_classes'])}")
 
                 if phase == 'train':
@@ -217,7 +217,7 @@ def main():
         "local_debug": False,
         "tracking_project": "features",
         "num_epochs": 10,
-        "batch_size": 1,
+        "batch_size": 32,
         "fine_tune_epochs": 0,
         "fine_tune_lr_factor": 0.5,
         "learning_rate": 1e-04,  #  1e-5 to 5e-5,
