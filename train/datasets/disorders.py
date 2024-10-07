@@ -76,7 +76,10 @@ class DiagClip(Dataset):
         files_folders = glob.glob(os.path.join(task_folder, '**', '*'), recursive=True)
         cachefiles = [f for f in files_folders if os.path.isfile(f) and not f.startswith(".")]
         cachefiles = [Path(x).stem for x in cachefiles]
-
+        for x in cachefiles:
+            if not "_" in x:
+                print(x)
+        exit()
         cachefiles = [x.split("_")[1] for x in cachefiles]
         print(cachefiles[0])
         exit()
