@@ -57,7 +57,7 @@ class DiagClip(Dataset):
         for diagnosis_idx in diagnoses:
             labels[diagnosis_idx] = 1
 
-        tpath = os.path.join("/data/traindata/mfcc", f"{self.df.iloc[idx]['GUID']}.pt")
+        tpath = os.path.join("/data/traindata/mfcc", f"{self.df.iloc[idx]['patient_id']}_{self.df.iloc[idx]['GUID']}.pt")
         mfcc_tensor = torch.load(tpath, weights_only=True)
         mfcc_tensor = torch.nn.functional.pad(mfcc_tensor, (1, 999 - mfcc_tensor.shape[2]))
         return {
@@ -76,7 +76,6 @@ class DiagClip(Dataset):
         files_folders = glob.glob(os.path.join(task_folder, '**', '*'), recursive=True)
         cachefiles = [f for f in files_folders if os.path.isfile(f) and not f.startswith(".")]
         cachefiles = [Path(x).stem for x in cachefiles]
-        cachefiles = [x.split("_")[1] for x in cachefiles]
         assert len(cachefiles) > 0, f"There aren't any local audio segment files for the task {task_name}"
         df = df[df['GUID'].isin(cachefiles)]
         df = df.sort_values(by="patient_id").reset_index(drop=True)
