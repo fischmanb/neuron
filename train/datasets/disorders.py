@@ -76,6 +76,7 @@ class DiagClip(Dataset):
         files_folders = glob.glob(os.path.join(task_folder, '**', '*'), recursive=True)
         cachefiles = [f for f in files_folders if os.path.isfile(f) and not f.startswith(".")]
         cachefiles = [Path(x).stem for x in cachefiles]
+        cachefiles = [x.split("_")[1] for x in cachefiles]
         assert len(cachefiles) > 0, f"There aren't any local audio segment files for the task {task_name}"
         df = df[df['GUID'].isin(cachefiles)]
         df = df.sort_values(by="patient_id").reset_index(drop=True)
